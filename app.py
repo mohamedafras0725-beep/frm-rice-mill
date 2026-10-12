@@ -1,0 +1,59 @@
+from flask import Flask, send_from_directory
+import os
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    files=[]
+    if os.path.exists('images'):
+        for f in os.listdir('images'):
+            if f.lower().endswith(('.jpg','.jpeg','.png','.webp','.avif')):
+                files.append(f)
+    bg_file = 'hero.jpg' if 'hero.jpg' in files else files[0] if files else ''
+    logo = 'logo.jpg'
+    gallery = [f for f in files if 'logo' not in f.lower() and 'hero' not in f.lower()]
+    g_html=''
+    products=[
+        ("Keeri Samba","The King of Fragrant Rice, Super Soft & Aromatic, Wedding & Festival Special","From Rs. 420/kg"),
+        ("Naadu Rice","Daily Healthy Rice, Light & Easy to Digest, Perfect for Everyday Meals","From Rs. 280/kg"),
+        ("White Raw Rice","Premium Clean White Rice, Fluffy & Tasty, Family Favorite","From Rs. 300/kg"),
+        ("Samba Rice","Traditional Sri Lankan Samba, Rich Taste, Highly Nutritious","From Rs. 350/kg")
+    ]
+    for i,f in enumerate(gallery[:4]):
+        title,desc,price=products[i % len(products)]
+        g_html+=f'<div style="background:white;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);border:1px solid #f0e6c8"><div style="position:relative"><img src="/images/{f}" style="width:100%;height:240px;object-fit:cover"><div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#d4af37,#f9e076);color:#3d2c00;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:bold">✨ PREMIUM</div></div><div style="padding:20px"><h4 style="color:#1b5e20;font-size:18px">{title}</h4><p style="color:#888;font-size:13px;margin:8px 0;line-height:1.5">{desc}</p><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><span style="color:#2e7d32;font-weight:bold">{price}</span><a href="https://wa.me/94764915323?text=I want {title}" style="background:#2e7d32;color:white;padding:8px 14px;border-radius:20px;text-decoration:none;font-size:12px">Order Now</a></div></div></div>'
+
+    return f"""
+    <html><head><title>FRM Rice Mill - Keeri Samba, Naadu, Samba</title><meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *{{margin:0;padding:0;box-sizing:border-box}} body{{background:#fdfcf5;font-family:'Inter',Arial}}
+      .nav{{background:rgba(253,252,245,0.95);backdrop-filter:blur(10px);padding:16px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 #f0e6c8}}
+      .hero{{position:relative;color:white;text-align:center;padding:110px 20px 90px;overflow:hidden}}
+      .hero-bg{{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}}.hero-overlay{{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(15,61,20,0.55) 0%,rgba(15,61,20,0.85) 100%);z-index:1}}
+      .hero-content{{position:relative;z-index:2;max-width:800px;margin:auto}}
+      .gold-line{{width:60px;height:3px;background:linear-gradient(90deg,#d4af37,#f9e076);margin:16px auto;border-radius:2px}}
+      .btn{{display:inline-block;padding:14px 30px;border-radius:30px;text-decoration:none;font-weight:600;margin:8px}}.btn-gold{{background:linear-gradient(135deg,#d4af37,#f9e076);color:#3d2c00}}.btn-white{{background:white;color:#1b5e20}}
+      .section{{padding:80px 5%;max-width:1250px;margin:auto}}.lux-card{{background:white;border-radius:22px;padding:30px;box-shadow:0 12px 40px rgba(0,0,0,0.06);border:1px solid #f5ecd0}}
+      .badge{{display:inline-block;background:#fdf6d8;color:#8a6d00;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:12px}}
+    </style></head>
+    <body>
+        <div class="nav"><div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.08)"><img src="/images/{logo}" style="height:32px"></div><div><b style="font-family:'Playfair Display';font-size:20px;color:#1b5e20">FRM RICE MILL</b><div style="font-size:10px;letter-spacing:2px;color:#b89b2d;font-weight:700">EST. 2010 • PREMIUM</div></div></div><a href="https://wa.me/94764915323" style="background:#25D366;color:white;padding:10px 20px;border-radius:25px;text-decoration:none;font-weight:600;font-size:13px">WhatsApp</a></div>
+        <div class="hero"><img src="/images/{bg_file}" class="hero-bg"><div class="hero-overlay"></div><div class="hero-content"><div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.3);padding:8px 18px;border-radius:30px;font-size:11px;letter-spacing:2px">✨ SRI LANKAN FAVORITES • DIRECT FROM MILL</div><h1 style="font-family:'Playfair Display';font-size:56px;line-height:1.1;margin:20px 0 10px">Keeri Samba, Naadu &<br><span style="background:linear-gradient(90deg,#f9e076,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Authentic Samba</span></h1><div class="gold-line"></div><p style="font-size:18px;opacity:0.9;line-height:1.6;max-width:600px;margin:0 auto 30px">Traditional Sri Lankan rice varieties, aged and milled to perfection. From fragrant Keeri Samba to daily Naadu - purity in every grain.</p><div><a href="https://wa.me/94764915323" class="btn btn-gold">Order on WhatsApp →</a><a href="#products" class="btn btn-white">View Our Rice</a></div></div></div>
+        <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center"><div><div class="badge">OUR HERITAGE</div><h2 style="font-family:'Playfair Display';font-size:42px;color:#1b5e20;line-height:1.2">Pure Ceylon Rice<br>Since 2010</h2><div style="width:50px;height:3px;background:#d4af37;margin:18px 0"></div><p style="color:#5a5a5a;line-height:1.9;margin-bottom:16px">At <b>FRM Rice Mill</b>, we specialize in Sri Lanka's most loved rice - <b>Keeri Samba, Naadu, White Raw Rice & Samba</b>. For 15+ years, families trust us for daily meals and special occasions.</p><p style="color:#5a5a5a;line-height:1.9;margin-bottom:24px">All our rice is <b>naturally aged</b>, triple-cleaned, and zero stones. Direct from our mill in Sri Lanka to your home.</p></div><div><img src="/images/{bg_file}" style="width:100%;border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,0.15)"></div></div>
+        <div style="background:#1b2a1b;color:#d8e9d0;padding:70px 5%"><div style="max-width:1250px;margin:auto;text-align:center"><div style="color:#d4af37;letter-spacing:3px;font-size:11px;font-weight:700">OUR RICE VARIETIES</div><h2 style="font-family:'Playfair Display';font-size:36px;color:white;margin:10px 0">Why Our Customers Love It</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px;margin-top:40px;text-align:left"><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:14px;border:1px solid rgba(212,175,55,0.2)"><h4 style="color:#f9e076">🍚 Keeri Samba</h4><p style="font-size:13px;opacity:0.8;margin-top:8px">Most fragrant, softest, perfect for biriyani, weddings, and special days</p></div><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:14px;border:1px solid rgba(212,175,55,0.2)"><h4 style="color:#f9e076">🍚 Naadu Rice</h4><p style="font-size:13px;opacity:0.8;margin-top:8px">Light, healthy, easy digest - best for daily lunch for whole family</p></div><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:14px;border:1px solid rgba(212,175,55,0.2)"><h4 style="color:#f9e076">🍚 White Raw Rice</h4><p style="font-size:13px;opacity:0.8;margin-top:8px">Clean, fluffy white rice, kids favorite, quick cooking</p></div><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:14px;border:1px solid rgba(212,175,55,0.2)"><h4 style="color:#f9e076">🍚 Samba Rice</h4><p style="font-size:13px;opacity:0.8;margin-top:8px">Traditional strong taste, high nutrition, authentic Sri Lankan</p></div></div></div></div>
+        <div class="section" id="products"><div style="text-align:center;margin-bottom:45px"><div class="badge">COLLECTION</div><h2 style="font-family:'Playfair Display';font-size:40px;color:#1b5e20">Our 4 Premium Rices</h2><p style="color:#888;margin-top:10px">Keeri Samba | Naadu | White Raw Rice | Samba</p></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:26px">{g_html}</div></div>
+        <div class="section" id="contact"><div class="lux-card" style="display:grid;grid-template-columns:1fr 1fr;gap:40px"><div><div class="badge">CONTACT</div><h2 style="font-family:'Playfair Display';font-size:34px;color:#1b5e20">Order Your Favorite<br>Rice Today</h2><div style="margin-top:30px"><div style="display:flex;gap:14px;margin:18px 0"><div style="width:44px;height:44px;background:#e8f5e9;border-radius:12px;display:flex;align-items:center;justify-content:center">📱</div><div><div style="font-size:12px;color:#999">WHATSAPP / CALL</div><div style="font-weight:700;color:#1b5e20">+94 76 4915323</div></div></div><div style="display:flex;gap:14px;margin:18px 0"><div style="width:44px;height:44px;background:#fdf6d8;border-radius:12px;display:flex;align-items:center;justify-content:center">🚚</div><div><div style="font-size:12px;color:#999">DELIVERY</div><div style="font-weight:700;color:#1b5e20">Island-wide Delivery<br><span style="font-weight:400;color:#777;font-size:13px">Retail 5kg, 10kg & Bulk 50kg bags</span></div></div></div></div></div><div><h3 style="color:#1b5e20;margin-bottom:18px">Quick Order Form</h3><form onsubmit="sendW(event)"><input id="n" placeholder="Your Name *" required style="width:100%;padding:14px;border:1.5px solid #f0e6c8;border-radius:12px;margin:8px 0;background:#fdfcf5"><input id="p" placeholder="Phone Number *" required style="width:100%;padding:14px;border:1.5px solid #f0e6c8;border-radius:12px;margin:8px 0;background:#fdfcf5"><select id="pr" style="width:100%;padding:14px;border:1.5px solid #f0e6c8;border-radius:12px;margin:8px 0;background:#fdfcf5"><option>Keeri Samba</option><option>Naadu Rice</option><option>White Raw Rice</option><option>Samba Rice</option><option>Bulk Order 50kg+</option></select><textarea id="m" rows="3" placeholder="How many KG? Delivery address?" style="width:100%;padding:14px;border:1.5px solid #f0e6c8;border-radius:12px;margin:8px 0;background:#fdfcf5"></textarea><button type="submit" style="width:100%;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;padding:16px;border-radius:12px;font-weight:700;cursor:pointer;margin-top:8px;font-size:15px">💬 Send Order to WhatsApp</button></form></div></div></div>
+        <div style="background:#0f1d0f;color:#8fb88f;text-align:center;padding:40px 20px"><div style="font-family:'Playfair Display';color:white;font-size:22px">FRM RICE MILL</div><div style="font-size:10px;letter-spacing:3px;color:#d4af37;margin:6px 0">KEERI SAMBA • NAADU • WHITE RICE • SAMBA</div><div style="margin-top:16px;font-size:13px">© 2026 FRM Rice Mill • +94 76 4915323 • Pure Ceylon Rice Since 2010</div></div>
+        <script>function sendW(e){{e.preventDefault();var t="*FRM RICE ORDER*%0A%0A👤 Name: "+document.getElementById('n').value+"%0A📱 Phone: "+document.getElementById('p').value+"%0A🍚 Rice: "+document.getElementById('pr').value+"%0A📝 Details: "+document.getElementById('m').value;window.open("https://wa.me/94764915323?text="+t,"_blank")}}</script>
+    </body></html>
+    """
+
+@app.route('/images/<path:f>')
+def serve(f):
+    return send_from_directory('images', f)
+
+if __name__ == '__main__':
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
